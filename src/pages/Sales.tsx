@@ -7,16 +7,15 @@ const Sales = () => {
   //   const [data, setData] = useState([]);
 
   const { isPending, sales } = useSales();
+  //const { error, setError } = useState({ error: false, message: '' });
 
-  return (
-    <>
-      {isPending ? (
-        <div>Loading...</div>
-      ) : (
-        (sales?.isError && <div>Error</div>) || <Table data={sales?.data} />
-      )}
-    </>
-  );
+  const isError = sales?.isError;
+
+  if (isError) {
+    return <div>{sales.message}</div>;
+  }
+
+  return <>{isPending ? <div>Loading...</div> : sales?.data && <Table data={sales?.data} />}</>;
 };
 
 export default Sales;

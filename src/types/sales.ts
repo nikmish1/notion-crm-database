@@ -3,6 +3,6 @@ export type Sales = {
     name: string;
     company: string;
     status: "low" | "medium" | "high";
-    estimatedValue: number;
-    accountOwner: string;
+    estimated_value: number;
+    account_owner: string;
 }
