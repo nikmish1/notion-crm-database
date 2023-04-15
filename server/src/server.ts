@@ -27,7 +27,7 @@ const server = http.createServer(async (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
 
     switch (req.url) {
-        case "/":
+        case "/sales/":
             // Query the database and wait for the result
             const query = await notion.databases.query({
                 database_id: notionDatabaseId,
