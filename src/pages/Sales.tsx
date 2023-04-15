@@ -1,21 +1,21 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
 import Table from '../components/table';
 import { useSales } from '../hooks';
 
-const Sales = () => {
-  //   const [data, setData] = useState([]);
+import columns from './columns';
 
+const SalesPage = () => {
   const { isPending, sales } = useSales();
-  //const { error, setError } = useState({ error: false, message: '' });
 
   const isError = sales?.isError;
 
   if (isError) {
     return <div>{sales.message}</div>;
   }
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
 
-  return <>{isPending ? <div>Loading...</div> : sales?.data && <Table data={sales?.data} />}</>;
+  return <>{sales?.data && columns && <Table data={sales?.data} columns={columns} />}</>;
 };
 
-export default Sales;
+export default SalesPage;

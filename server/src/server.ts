@@ -60,7 +60,7 @@ const server = http.createServer(async (req, res) => {
       const list = ress.data.results.map((record: any) => {
 
         const row = {
-          // id: record.properties.id.content,
+          id: record.properties.id.title[0].text.content,
           estimated_value: record.properties.estimated_value.number,
           name: record.properties.name.rich_text[0].text.content,
           company: record.properties.company.rich_text[0].text.content,

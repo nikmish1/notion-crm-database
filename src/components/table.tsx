@@ -1,32 +1,58 @@
-import { Sales } from '../types';
+import { getCoreRowModel, useReactTable, flexRender } from '@tanstack/react-table';
 
-type TableProps = {
-  data: Sales[];
+type TableProps<T> = {
+  data: T[];
+  columns: any[];
 };
 
-const Table = ({ data }: TableProps) => {
+const Table = <T extends object>({ data, columns }: TableProps<T>) => {
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   console.log('{data}', { data });
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Status</th>
-          <th>Estimated Value</th>
-          <th>Account Owner</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((item) => (
-          <tr key={item.id}>
-            <td>{item.name}</td>
-            <td>{item.status}</td>
-            <td>{item.estimated_value}</td>
-            <td>{item.account_owner}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="p-2">
+      <table>
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          {table.getFooterGroups().map((footerGroup) => (
+            <tr key={footerGroup.id}>
+              {footerGroup.headers.map((header) => (
+                <th key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.footer, header.getContext())}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </tfoot>
+      </table>
+    </div>
   );
 };
 
