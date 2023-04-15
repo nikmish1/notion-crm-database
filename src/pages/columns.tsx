@@ -21,7 +21,7 @@ const columns = [
     cell: (info) => info.renderValue()?.name,
   }),
   columnHelper.accessor('estimated_value', {
-    header: 'Estimated Value',
+    header: 'Est. Value',
   }),
   columnHelper.accessor('account_owner', {
     header: 'Account Owner',

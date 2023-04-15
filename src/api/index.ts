@@ -16,6 +16,16 @@ const getSalesData = async (): Promise<Response<Sales[]>> => {
     }
 }
 
+const sortSortedData = async (): Promise<Response<Sales[]>> => {
+    let response: AxiosResponse<Sales[], any>
+    try {
+        response = await get<Sales[]>(SALES);
+        return resolveResponse<Sales[]>(response);
+    } catch (err: unknown | AxiosError) {
+        return resolveErrorResponse(err);
+    }
+}
+
 const resolveErrorResponse = (err: unknown | AxiosError) => {
     if (axios.isAxiosError(err)) {
         return { isError: true, data: [], message: err.message }
@@ -32,4 +42,4 @@ const resolveResponse = <T>(response: AxiosResponse): Response<T> => {
 }
 
 
-export { getSalesData }
+export { getSalesData, sortSalesData }
