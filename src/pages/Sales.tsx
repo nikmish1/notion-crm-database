@@ -1,20 +1,24 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Table from '../components/table';
+import { useSales } from '../hooks';
 
 const Sales = () => {
-  const [data, setData] = useState([]);
+  //   const [data, setData] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await axios('https://jsonplaceholder.typicode.com/posts');
-      setData(result.data);
-    };
+  const { isPending, sales } = useSales();
 
-    fetchData();
-  }, []);
+  console.log({ isPending, sales });
 
-  return <Table />;
+  return (
+    <>
+      {isPending ? (
+        <div>Loading...</div>
+      ) : (
+        (sales?.isError && <div>Error</div>) || <Table data={sales?.data} />
+      )}
+    </>
+  );
 };
 
 export default Sales;

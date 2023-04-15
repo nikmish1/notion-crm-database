@@ -1,4 +1,4 @@
-const Table = () => {
+const Table = ({ data }: any) => {
   return (
     <table>
       <thead>
@@ -8,7 +8,7 @@ const Table = () => {
           <th>Body</th>
         </tr>
       </thead>
-      <tbody>
+      {/* <tbody>
         {data.map((item) => (
           <tr key={item.id}>
             <td>{item.id}</td>
@@ -16,7 +16,7 @@ const Table = () => {
             <td>{item.body}</td>
           </tr>
         ))}
-      </tbody>
+      </tbody> */}
     </table>
   );
 };
