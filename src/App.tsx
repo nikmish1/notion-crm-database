@@ -1,9 +1,6 @@
 import React from 'react';
 
-
-
 function App() {
-
   return (
     <div>
       <h1>Things to Learn</h1>
@@ -11,10 +8,10 @@ function App() {
       <button
         type="button"
         onClick={() => {
-          fetch("http://localhost:8000/")
+          fetch('http://localhost:8000/')
             .then((response) => response.json())
             .then((payload) => {
-              console.log(payload)
+              console.log(payload);
             });
         }}
       >
