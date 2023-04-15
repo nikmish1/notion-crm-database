@@ -1,4 +1,5 @@
-import { Column } from "../types";
+import { SortingState } from "@tanstack/react-table";
+import { Column, SortNotionType } from "../types";
 
 export const getColumns = <T>(obj: T): Column[] | undefined => {
     if (typeof obj === 'object' && obj !== null) {
@@ -11,4 +12,15 @@ export const getColumns = <T>(obj: T): Column[] | undefined => {
             };
         })
     }
+}
+
+export const getSortingParams = (sortingState: SortingState): SortNotionType => {
+    return {
+        sorts: [
+            {
+                property: sortingState[0].id,
+                direction: sortingState[0].desc ? 'descending' : 'ascending',
+            },
+        ],
+    };
 }

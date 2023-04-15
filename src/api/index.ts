@@ -1,25 +1,34 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { Response, Sales, } from "../types";
+import { Response, Sales, SortNotionType, } from "../types";
 import { SALES } from "./urls"
 
-const get = async <T>(url: string) => {
-    return await axios.get<T>(url);
+const post = async <T>(url: string, payload: {}) => {
+    return await axios.post<T>(url, payload);
 }
 
-const getSalesData = async (): Promise<Response<Sales[]>> => {
+const getSalesData = async ({ sortQuery }: { sortQuery?: SortNotionType }): Promise<Response<Sales[]>> => {
     let response: AxiosResponse<Sales[], any>
     try {
-        response = await get<Sales[]>(SALES);
+        //response = await get<Sales[]>(SALES);
+        let payload = {};
+        console.log("sortQuery received:", sortQuery)
+        if (sortQuery?.sorts) {
+            payload = { sortParams: sortQuery }
+        }
+
+        response = await post<Sales[]>(SALES, payload);
         return resolveResponse<Sales[]>(response);
     } catch (err: unknown | AxiosError) {
         return resolveErrorResponse(err);
     }
 }
 
-const sortSortedData = async (): Promise<Response<Sales[]>> => {
+
+
+const getSortedData = async (sortBy: SortNotionType): Promise<Response<Sales[]>> => {
     let response: AxiosResponse<Sales[], any>
     try {
-        response = await get<Sales[]>(SALES);
+        response = await post<Sales[]>(SALES, sortBy);
         return resolveResponse<Sales[]>(response);
     } catch (err: unknown | AxiosError) {
         return resolveErrorResponse(err);
@@ -42,4 +51,4 @@ const resolveResponse = <T>(response: AxiosResponse): Response<T> => {
 }
 
 
-export { getSalesData, sortSalesData }
+export { getSalesData, getSortedData }

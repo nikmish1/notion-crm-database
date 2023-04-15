@@ -11,3 +11,10 @@ export type Column = {
     Header: string;
     accessor: string;
 }
+
+export type SortNotionType = {
+    sorts: [{
+        property: string,
+        direction: 'ascending' | 'descending'
+    }]
+}

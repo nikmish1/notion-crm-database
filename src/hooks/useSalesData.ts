@@ -16,7 +16,7 @@ export const useSales = (): useSalesProps => {
     useEffect(() => {
         (async () => {
             setIsPending(true);
-            const sales = await getSalesData();
+            //const sales = await getSalesData();
             setIsPending(false);
             setSales(sales)
         })()

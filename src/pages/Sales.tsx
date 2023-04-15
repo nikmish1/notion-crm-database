@@ -1,16 +1,20 @@
-import { SortingState, Updater } from '@tanstack/react-table';
+import { SortingState } from '@tanstack/react-table';
 import Table from '../components/table';
-import { useSales } from '../hooks';
-
 import columns from './columns';
 import { useEffect, useState } from 'react';
+import { useSorting } from '../hooks/useSorting';
+import { getSortingParams } from '../utils/object-util';
 
 const SalesPage = () => {
-  const { isPending, sales } = useSales();
+  //const { isPending, sales } = useSales();
+  const { sales, isPending, sortData } = useSorting();
   const [sorting, setSorting] = useState<SortingState>([]);
 
   useEffect(() => {
-    console.log('sorting:', sorting);
+    if (sorting.length > 0) {
+      sortData(getSortingParams(sorting));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sorting]);
 
   const isError = sales?.isError;
@@ -20,11 +24,6 @@ const SalesPage = () => {
   if (isPending) {
     return <div>Loading...</div>;
   }
-
-  const handleSorting = (sorting: Updater<SortingState>) => {
-    console.log('sorting:', sorting);
-    setSorting(sorting);
-  };
 
   return (
     <>

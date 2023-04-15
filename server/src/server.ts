@@ -1,7 +1,8 @@
 import { Client } from '@notionhq/client';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import express, { Express, Request, Response } from 'express';
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 require('dotenv').config();
 
@@ -12,8 +13,10 @@ if (!notionDatabaseId || !notionSecret) {
 }
 
 const app: Express = express();
-const jsonParser = bodyParser.json()
+const jsonParser = bodyParser.json();
 
+
+app.use(cors({ origin: 'http://localhost:3000' }));
 const port = 8000;
 const endpoint = `https://api.notion.com/v1/databases/${notionDatabaseId}/query`;
 
@@ -37,34 +40,40 @@ let config = {
   'Content-Type': 'application/json',
 };
 
-app.get('/sales', async (req: Request, res: Response) => {
-  const ress = await axios.post(endpoint, {}, { headers: config });
+// app.get('/sales', async (req: Request, res: Response) => {
+//   const ress = await axios.post(endpoint, {}, { headers: config });
 
-  const list = ress.data.results.map((record: any) => {
-    return getRowFromProperties(record.properties);
-  });
+//   const list = ress.data.results.map((record: any) => {
+//     return getRowFromProperties(record.properties);
+//   });
 
 
-  res.send(list);
-});
+//   res.send(list);
+// });
 
-app.post("/sales/sort/", jsonParser, async (req: Request, res: Response) => {
-  console.log("hhhhh")
+app.post("/sales/", jsonParser, async (req: Request, res: Response) => {
+  console.log("hhhhh", req.body)
   const sortPayload: {
     sorts: {
       property: string,
       direction: 'ascending' | 'descending'
-    }
-  } = req.body;
+    } | {}
+  } = req.body.sortParams;
 
-  const ress = await axios.post(endpoint, sortPayload, { headers: config });
+  try {
+    const ress = await axios.post(endpoint, sortPayload, { headers: config });
 
-  const list = ress.data.results.map((record: any) => {
-    return getRowFromProperties(record.properties);
-  });
+    const list = ress.data.results.map((record: any) => {
+      return getRowFromProperties(record.properties);
+    });
 
-  //res.writeHead(200);
-  res.send(list);
+    //res.writeHead(200);
+    res.send(list);
+  }
+  catch (err: any | AxiosError) {
+    console.log(err)
+    res.send(err);
+  }
 })
 
 app.listen(port, () => {
