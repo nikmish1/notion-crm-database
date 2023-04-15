@@ -8,8 +8,6 @@ const Sales = () => {
 
   const { isPending, sales } = useSales();
 
-  console.log({ isPending, sales });
-
   return (
     <>
       {isPending ? (
