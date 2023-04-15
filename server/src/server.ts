@@ -1,8 +1,9 @@
 import { Client } from '@notionhq/client';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import express, { Express, Request, Response } from 'express';
-require('dotenv').config();
+const bodyParser = require('body-parser');
 
+require('dotenv').config();
 
 const notionDatabaseId = process.env.NOTION_DATABASE_ID;
 const notionSecret = process.env.NOTION_SECRET;
@@ -10,56 +11,74 @@ if (!notionDatabaseId || !notionSecret) {
   throw Error('Must define NOTION_SECRET and NOTION_DATABASE_ID in env');
 }
 
-const app: Express = express()
+const app: Express = express();
+const jsonParser = bodyParser.json()
 
-const host = 'localhost';
 const port = 8000;
-const URL = `https://api.notion.com/v1/databases/${notionDatabaseId}/query`
+const endpoint = `https://api.notion.com/v1/databases/${notionDatabaseId}/query`;
 
-export type Sales = {
-  id: number,
-  name: string,
-  company: string,
-  status: 'low' | 'medium' | 'high',
-  estimated_value: number,
-  account_owner: string,
+type Sales = {
+  id: number;
+  name: string;
+  company: string;
+  status: 'low' | 'medium' | 'high';
+  estimated_value: number;
+  account_owner: string;
 };
 
+type SortNotionParams = {
+  sortProperty: string;
+  sortOrder: 'asc' | 'desc';
+}
 
-
-
-var config = {
-  method: 'post',
-  url: URL,
-
-  headers: {
-    'Authorization': `Bearer ${notionSecret}`,
-    'Notion-Version': '2022-06-28',
-    'Content-Type': 'application/json',
-
-  },
+let config = {
+  Authorization: `Bearer ${notionSecret}`,
+  'Notion-Version': '2022-06-28',
+  'Content-Type': 'application/json',
 };
 
 app.get('/sales', async (req: Request, res: Response) => {
-  const ress = await axios(config);
+  const ress = await axios.post(endpoint, {}, { headers: config });
+
   const list = ress.data.results.map((record: any) => {
-    console.log("first", JSON.stringify(record.properties))
-    const row = {
-      id: record.properties.id.title[0].text.content,
-      estimated_value: record.properties.estimated_value.number,
-      name: record.properties.name.rich_text[0].text.content,
-      company: record.properties.company.rich_text[0].text.content,
-      status: { name: record.properties.status.select.name, color: record.properties.status.select.color },
-      account_owner: record.properties.account_owner.created_by.id,
-    }
-    return row;
+    return getRowFromProperties(record.properties);
   });
 
-  res.setHeader('Content-Type', 'application/json');
-  res.writeHead(200);
-  res.end(JSON.stringify(list));
+
+  res.send(list);
 });
+
+app.post("/sales/sort/", jsonParser, async (req: Request, res: Response) => {
+  console.log("hhhhh")
+  const sortPayload: {
+    sorts: {
+      property: string,
+      direction: 'ascending' | 'descending'
+    }
+  } = req.body;
+
+  const ress = await axios.post(endpoint, sortPayload, { headers: config });
+
+  const list = ress.data.results.map((record: any) => {
+    return getRowFromProperties(record.properties);
+  });
+
+  //res.writeHead(200);
+  res.send(list);
+})
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
+
+const getRowFromProperties = (properties: any) => {
+  const row = {
+    id: properties.id.title[0].text.content,
+    estimated_value: properties.estimated_value.number,
+    name: properties.name.rich_text[0].text.content,
+    company: properties.company.rich_text[0].text.content,
+    status: { name: properties.status.select.name, color: properties.status.select.color },
+    account_owner: properties.account_owner.created_by.id,
+  };
+  return row;
+};
