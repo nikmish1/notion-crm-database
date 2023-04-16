@@ -1,15 +1,15 @@
 import {
-  getCoreRowModel,
   useReactTable,
+  ColumnResizeMode,
+  getCoreRowModel,
   flexRender,
   getSortedRowModel,
   SortingState,
-  ColumnSort,
-  Updater,
   OnChangeFn,
 } from '@tanstack/react-table';
-import './table.module.css';
-import { useEffect, useState } from 'react';
+
+import './table.css';
+import { useState } from 'react';
 
 type TableProps<T> = {
   data: T[];
@@ -19,38 +19,44 @@ type TableProps<T> = {
 };
 
 const Table = <T extends object>({ data, columns, onSorting, sorting }: TableProps<T>) => {
-  //const [sorting, setSorting] = useState<SortingState>([]);
-
-  // useEffect(() => {
-  //   onSorting(sorting);
-  // }, [onSorting, sorting]);
+  const [columnResizeMode, setColumnResizeMode] = useState<ColumnResizeMode>('onChange');
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    columnResizeMode: columnResizeMode,
+    enableColumnResizing: true,
     state: {
       sorting,
     },
     onSortingChange: onSorting,
-    // sortingFns: {
-    //   myCustomSorting: (rowA: any, rowB: any, columnId: any): number => {
-    //     console.log('rowA', rowA.getValue(columnId).value);
-    //     return rowA.getValue(columnId).value < rowB.getValue(columnId).value ? 1 : -1;
-    //   },
-    // },
     getSortedRowModel: getSortedRowModel(),
     manualSorting: true,
   });
 
   return (
-    <div className="p-2">
-      <table>
+    <div>
+      <table
+        {...{
+          style: {
+            width: table.getCenterTotalSize(),
+          },
+        }}
+      >
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id}>
+                <th
+                  {...{
+                    key: header.id,
+                    colSpan: header.colSpan,
+                    style: {
+                      width: header.getSize(),
+                    },
+                  }}
+                >
                   {header.isPlaceholder ? null : (
                     <div
                       {...{
@@ -59,6 +65,13 @@ const Table = <T extends object>({ data, columns, onSorting, sorting }: TablePro
                       }}
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
+                      <div
+                        {...{
+                          onMouseDown: header.getResizeHandler(),
+                          onTouchStart: header.getResizeHandler(),
+                          className: `resizer ${header.column.getIsResizing() ? 'isResizing' : ''}`,
+                        }}
+                      />
                       {{
                         asc: ' 🔼',
                         desc: ' 🔽',
@@ -70,6 +83,7 @@ const Table = <T extends object>({ data, columns, onSorting, sorting }: TablePro
             </tr>
           ))}
         </thead>
+
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>

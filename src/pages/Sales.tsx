@@ -1,9 +1,10 @@
 import { SortingState } from '@tanstack/react-table';
-import Table from '../components/table';
+
 import columns from './columns';
 import { useEffect, useState } from 'react';
 import { useSorting } from '../hooks/useSorting';
 import { getSortingParams } from '../utils/object-util';
+import Table from '../components/table';
 
 const SalesPage = () => {
   //const { isPending, sales } = useSales();
