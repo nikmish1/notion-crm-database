@@ -7,8 +7,7 @@ const columns = [
   columnHelper.accessor('id', {
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor((row) => row.name, {
-    id: 'name',
+  columnHelper.accessor('name', {
     cell: (info) => <i>{info.getValue()}</i>,
     header: () => <span>Name</span>,
   }),

@@ -67,6 +67,11 @@ td,
   opacity: 1;
 }
 
+.dragOver {
+  border: 0.1rem solid rgb(117, 117, 128);
+  background: aliceblue;
+}
+
 @media (hover: hover) {
   .resizer {
     opacity: 0;
