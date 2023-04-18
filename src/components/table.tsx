@@ -1,6 +1,5 @@
 import {
   useReactTable,
-  ColumnResizeMode,
   getCoreRowModel,
   flexRender,
   getSortedRowModel,
@@ -30,7 +29,6 @@ const getHeaderDraggedIdx = (list: any[], key: string, id: string): number => {
 };
 
 const Table = <T extends object>({ data, columns, onSorting, sorting }: TableProps<T>) => {
-  const [columnResizeMode, setColumnResizeMode] = useState<ColumnResizeMode>('onChange');
   const [colHeaders, setColHeaders] = useState<any>(columns);
   const [dragOver, setDragOver] = useState('');
 
@@ -38,7 +36,7 @@ const Table = <T extends object>({ data, columns, onSorting, sorting }: TablePro
     data,
     columns: colHeaders,
     getCoreRowModel: getCoreRowModel(),
-    columnResizeMode: columnResizeMode,
+    columnResizeMode: 'onChange',
     enableColumnResizing: true,
     state: {
       sorting,
@@ -48,26 +46,24 @@ const Table = <T extends object>({ data, columns, onSorting, sorting }: TablePro
     manualSorting: true,
   });
 
-  const handleDragStart = (e: React.DragEvent<HTMLTableHeaderCellElement>, headerId: string) => {
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, headerId: string) => {
     e.dataTransfer.setData('colIdx', headerId);
-
-    const { id } = e.target as HTMLTableHeaderCellElement;
+    const { id } = e.target as HTMLDivElement;
     const idx = getHeaderDraggedIdx(colHeaders, 'accessorKey', id.split('-')[1]);
-    console.log('headerDraggedIdx', idx);
+
     e.dataTransfer.setData('colIdx', idx.toString());
   };
-  const handleDragOver = (e: React.DragEvent<HTMLTableHeaderCellElement>) => e.preventDefault();
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => e.preventDefault();
 
-  const handleDragEnter = (e: React.DragEvent<HTMLTableHeaderCellElement>) => {
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const { id } = e.target as HTMLTableHeaderCellElement;
-    console.log(' handleDragEnter id: ', id, '------', id.split('-')[1]);
+    const { id } = e.target as HTMLDivElement;
+
     setDragOver(id.split('-')[1]);
   };
 
-  const handleOnDrop = (e: React.DragEvent<HTMLTableHeaderCellElement>) => {
-    const { id } = e.target as HTMLTableHeaderCellElement;
-    console.log('id: ', id, '---', id.split('-')[1]);
+  const handleOnDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    const { id } = e.target as HTMLDivElement;
     if (!id) {
       return;
     }
@@ -101,11 +97,6 @@ const Table = <T extends object>({ data, columns, onSorting, sorting }: TablePro
                 return (
                   <th
                     id={`th-${header.id}`}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, header.id)}
-                    onDragOver={handleDragOver}
-                    onDragEnter={(e) => handleDragEnter(e)}
-                    onDrop={handleOnDrop}
                     {...{
                       colSpan: header.colSpan,
                       style: {
@@ -115,28 +106,40 @@ const Table = <T extends object>({ data, columns, onSorting, sorting }: TablePro
                     className={header.id === dragOver ? 'dragOver' : ''}
                   >
                     {header.isPlaceholder ? null : (
-                      <div
-                        id={`div-${header.id}`}
-                        {...{
-                          className: header.column.getCanSort() ? 'cursor-pointer select-none' : '',
-                          onClick: header.column.getToggleSortingHandler(),
-                        }}
-                      >
-                        {flexRender(header.column.columnDef.header, header.getContext())}
+                      <>
                         <div
+                          id={`div-${header.id}`}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, header.id)}
+                          onDragOver={handleDragOver}
+                          onDragEnter={(e) => handleDragEnter(e)}
+                          onDrop={handleOnDrop}
+                          style={{ width: '50%', textAlign: 'center' }}
                           {...{
-                            onMouseDown: header.getResizeHandler(),
-                            onTouchStart: header.getResizeHandler(),
-                            className: `resizer ${
-                              header.column.getIsResizing() ? 'isResizing' : ''
-                            }`,
+                            className: header.column.getCanSort()
+                              ? 'cursor-pointer select-none'
+                              : '',
+                            onClick: header.column.getToggleSortingHandler(),
                           }}
-                        />
-                        {{
-                          asc: ' 🔼',
-                          desc: ' 🔽',
-                        }[header.column.getIsSorted() as string] ?? null}
-                      </div>
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                        </div>
+                        <div>
+                          <div
+                            {...{
+                              onMouseDown: header.getResizeHandler(),
+                              onTouchStart: header.getResizeHandler(),
+                              className: `resizer ${
+                                header.column.getIsResizing() ? 'isResizing' : ''
+                              }`,
+                            }}
+                          />
+                          {{
+                            asc: ' 🔼',
+                            desc: ' 🔽',
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </div>
+                      </>
                     )}
                   </th>
                 );
