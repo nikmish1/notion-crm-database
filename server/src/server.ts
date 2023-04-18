@@ -52,7 +52,6 @@ let config = {
 // });
 
 app.post("/sales/", jsonParser, async (req: Request, res: Response) => {
-  console.log("hhhhh", req.body)
   const sortPayload: {
     sorts: {
       property: string,
@@ -64,7 +63,7 @@ app.post("/sales/", jsonParser, async (req: Request, res: Response) => {
     const ress = await axios.post(endpoint, sortPayload, { headers: config });
 
     const list = ress.data.results.map((record: any) => {
-      return getRowFromProperties(record.properties);
+      return record.properties;
     });
 
     //res.writeHead(200);
@@ -80,14 +79,14 @@ app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
 
-const getRowFromProperties = (properties: any) => {
-  const row = {
-    id: properties.id.title[0].text.content,
-    estimated_value: properties.estimated_value.number,
-    name: properties.name.rich_text[0].text.content,
-    company: properties.company.rich_text[0].text.content,
-    status: { name: properties.status.select.name, color: properties.status.select.color },
-    account_owner: properties.account_owner.created_by.id,
-  };
-  return row;
-};
+// const getRowFromProperties = ({ id, estimated_value, name, company, status, account_owner }: any) => {
+//   const row = {
+//     id: { type: id.type, value: id.title[0].text.content },
+//     estimated_value: { type: estimated_value.type, value: estimated_value.number },
+//     name: {type:  value: name.rich_text[0].text.content},
+//     company: company.rich_text[0].text.content,
+//     status: { name: status.select.name, color: status.select.color },
+//     account_owner: account_owner.created_by.id,
+//   };
+//   return row;
+// };

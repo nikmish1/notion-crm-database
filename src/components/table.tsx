@@ -18,7 +18,7 @@ type TableProps<T> = {
   onSorting: OnChangeFn<SortingState>;
 };
 
-const getHeaderDraggedIdx = (list: any[], key: string, id: string): number => {
+export const getHeaderDraggedIdx = (list: any[], key: string, id: string): number => {
   const idx = list.findIndex((col) => {
     console.log({ col: col[key], id });
     return col[key] === id;
@@ -28,7 +28,7 @@ const getHeaderDraggedIdx = (list: any[], key: string, id: string): number => {
   return idx;
 };
 
-const Table = <T extends object>({ data, columns, onSorting, sorting }: TableProps<T>) => {
+export const Table = <T extends object>({ data, columns, onSorting, sorting }: TableProps<T>) => {
   const [colHeaders, setColHeaders] = useState<any>(columns);
   const [dragOver, setDragOver] = useState('');
 
@@ -93,7 +93,6 @@ const Table = <T extends object>({ data, columns, onSorting, sorting }: TablePro
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
-                console.log('header.id:', header.id);
                 return (
                   <th
                     id={`th-${header.id}`}
@@ -174,5 +173,3 @@ const Table = <T extends object>({ data, columns, onSorting, sorting }: TablePro
     </div>
   );
 };
-
-export default Table;

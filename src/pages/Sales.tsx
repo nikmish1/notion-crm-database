@@ -4,7 +4,7 @@ import columns from './columns';
 import { useEffect, useState } from 'react';
 import { useSorting } from '../hooks/useSorting';
 import { getSortingParams } from '../utils/object-util';
-import Table from '../components/table';
+import { Table, Filter } from '../components';
 
 const SalesPage = () => {
   //const { isPending, sales } = useSales();
@@ -26,10 +26,17 @@ const SalesPage = () => {
     return <div>Loading...</div>;
   }
 
+  const handleApplyFilter = () => {
+    throw new Error('Function not implemented.');
+  };
+
   return (
     <>
       {sales?.data && columns && (
-        <Table data={sales?.data} columns={columns} onSorting={setSorting} sorting={sorting} />
+        <>
+          <Filter onApplyFilter={handleApplyFilter} />
+          <Table data={sales?.data} columns={columns} onSorting={setSorting} sorting={sorting} />
+        </>
       )}
     </>
   );
