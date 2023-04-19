@@ -9,7 +9,6 @@ const columns = [
   }),
   columnHelper.accessor('name', {
     cell: (info) => {
-      console.log({ info });
       return <i>{info.getValue().rich_text[0].plain_text}</i>;
     },
     header: () => <span>Name</span>,

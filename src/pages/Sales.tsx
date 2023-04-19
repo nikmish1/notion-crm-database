@@ -1,22 +1,36 @@
-import { SortingState } from '@tanstack/react-table';
+import { OnChangeFn, SortingState, functionalUpdate } from '@tanstack/react-table';
 
 import columns from './columns';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSales } from '../hooks/useSales';
 import { getSortingParams } from '../utils/object-util';
 import { Table, Filter } from '../components';
+import { FilterPayload, SortPayload } from '../types';
 
 const SalesPage = () => {
-  //const { isPending, sales } = useSales();
   const { sales, isPending, applyFilter } = useSales();
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [filterPayload, setFilterPayload] = useState<FilterPayload>();
 
-  useEffect(() => {
-    if (sorting.length > 0) {
-      applyFilter(getSortingParams(sorting));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sorting]);
+  const handleSorting: OnChangeFn<SortingState> = (e) => {
+    const updatedSortingVal = functionalUpdate(e, sorting);
+    const sortingPayload = {
+      sorts: [...getSortingParams(updatedSortingVal)],
+      filter: filterPayload,
+    };
+    applyFilter(sortingPayload);
+    setSorting(updatedSortingVal);
+  };
+
+  const handleFilter = useCallback(
+    (filter: FilterPayload) => {
+      const sortPayload: SortPayload | undefined =
+        sorting.length > 0 ? [...getSortingParams(sorting)] : undefined;
+      applyFilter({ sorts: sortPayload, filter: filter });
+      setFilterPayload(filter);
+    },
+    [applyFilter, sorting],
+  );
 
   const isError = sales?.isError;
   if (isError) {
@@ -26,17 +40,12 @@ const SalesPage = () => {
     return <div>Loading...</div>;
   }
 
-  const handleApplyFilter = (filter: any) => {
-    console.log('filter', filter);
-    applyFilter(filter);
-  };
-
   return (
     <>
       {sales?.data && columns && (
         <>
-          <Filter data={sales?.data} onApplyFilter={handleApplyFilter} />
-          <Table data={sales?.data} columns={columns} onSorting={setSorting} sorting={sorting} />
+          <Filter data={sales?.data} onApplyFilter={handleFilter} filterPayload={filterPayload}/>
+          <Table data={sales?.data} columns={columns} onSorting={handleSorting} sorting={sorting} />
         </>
       )}
     </>

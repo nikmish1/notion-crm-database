@@ -84,12 +84,31 @@ export type Column = {
     accessor: string;
 }
 
-type SortPayload = [{
+export type SortPayload = {
     property: string,
     direction: 'ascending' | 'descending'
-}]
+}[]
+
+// export type FilterPayload = {
+//     [x: string]: keyof Sales | {
+//         equals: string | number;
+//     };
+//     property: keyof Sales;
+// };
+
+export type FilterPayload = {
+    property: string,
+    [x: string]: any
+}
+
+// export type Filter = {
+//     property: string,
+//     [x: string]: any
+// }
+
+
 
 export type NotionPayload = {
     sorts?: SortPayload,
-    filter?: {}
+    filter?: FilterPayload
 }

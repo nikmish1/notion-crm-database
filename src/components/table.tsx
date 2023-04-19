@@ -71,6 +71,7 @@ export const Table = <T extends object>({ data, columns, onSorting, sorting }: T
     const draggedColIdx = +e.dataTransfer.getData('colIdx');
 
     const tempCols = [...colHeaders];
+
     if (draggedColIdx !== droppedColIdx) {
       tempCols[draggedColIdx] = colHeaders[droppedColIdx];
       tempCols[droppedColIdx] = colHeaders[draggedColIdx];
@@ -113,7 +114,7 @@ export const Table = <T extends object>({ data, columns, onSorting, sorting }: T
                           onDragOver={handleDragOver}
                           onDragEnter={(e) => handleDragEnter(e)}
                           onDrop={handleOnDrop}
-                          style={{ width: '50%', textAlign: 'center' }}
+                          // style={{ width: '50%', textAlign: 'center' }}
                           {...{
                             className: header.column.getCanSort()
                               ? 'cursor-pointer select-none'
@@ -121,7 +122,18 @@ export const Table = <T extends object>({ data, columns, onSorting, sorting }: T
                             onClick: header.column.getToggleSortingHandler(),
                           }}
                         >
-                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          <div style={{ display: 'flex', gap: '0.2rem' }}>
+                            <span>
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                            </span>
+                            {/* <pre>{JSON.stringify(header.column.getIsSorted())}</pre> */}
+                            <span>
+                              {{
+                                asc: ' 🔼',
+                                desc: ' 🔽',
+                              }[header.column.getIsSorted() as string] ?? null}
+                            </span>
+                          </div>
                         </div>
                         <div>
                           <div
@@ -133,10 +145,6 @@ export const Table = <T extends object>({ data, columns, onSorting, sorting }: T
                               }`,
                             }}
                           />
-                          {{
-                            asc: ' 🔼',
-                            desc: ' 🔽',
-                          }[header.column.getIsSorted() as string] ?? null}
                         </div>
                       </>
                     )}
@@ -148,27 +156,14 @@ export const Table = <T extends object>({ data, columns, onSorting, sorting }: T
         </thead>
 
         <tbody>
-          {table.getRowModel().rows.map((row) => (
+          {table.getRowModel().rows.length > 0 ? table.getRowModel().rows.map( (row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
               ))}
             </tr>
-          ))}
+          )) : <tr>No data found</tr> }
         </tbody>
-        <tfoot>
-          {table.getFooterGroups().map((footerGroup) => (
-            <tr key={footerGroup.id}>
-              {footerGroup.headers.map((header) => (
-                <th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.footer, header.getContext())}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </tfoot>
       </table>
     </div>
   );

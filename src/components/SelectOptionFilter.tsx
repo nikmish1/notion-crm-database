@@ -1,6 +1,5 @@
-import { ChangeEvent } from "react";
-import { FilterOption } from "../types";
-
+import { ChangeEvent } from 'react';
+import { FilterOption } from '../types';
 
 type SelectOptionFilterProps = {
   name: string;
@@ -16,13 +15,18 @@ export const SelectOptionFilter = ({
   filterValue,
 }: SelectOptionFilterProps) => {
   return (
-    <select defaultValue="select filter" name={name} onChange={onChange} value={filterValue}>
-      <option key="default" value="select filter" />
-      {options!.map(({ id, name }) => (
-        <option key={id} value={name}>
-          {name}
+    <div style={{ marginBottom: '0.5rem', display: 'flex', marginLeft: '0.5rem', gap: '0.2rem' }}>
+      <label htmlFor="id">where {name} is</label>
+      <select id={name} defaultValue="select" name={name} onChange={onChange}>
+        <option key="default" value="select">
+          Select
         </option>
-      ))}
-    </select>
+        {options!.map(({ id, name }) => (
+          <option key={id} value={name}>
+            {name}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 };
