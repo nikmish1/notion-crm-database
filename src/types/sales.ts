@@ -84,9 +84,12 @@ export type Column = {
     accessor: string;
 }
 
-export type SortNotionType = {
-    sorts: [{
-        property: string,
-        direction: 'ascending' | 'descending'
-    }]
+type SortPayload = [{
+    property: string,
+    direction: 'ascending' | 'descending'
+}]
+
+export type NotionPayload = {
+    sorts?: SortPayload,
+    filter?: {}
 }

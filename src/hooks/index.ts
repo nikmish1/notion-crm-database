@@ -1,1 +1,1 @@
-export * from "./useSalesData"
+export * from "./useSales"

@@ -1,19 +1,18 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { Response, Sales, SortNotionType, } from "../types";
+import { Response, Sales, NotionPayload, } from "../types";
 import { SALES } from "./urls"
 
 const post = async <T>(url: string, payload: {}) => {
     return await axios.post<T>(url, payload);
 }
 
-const getSalesData = async ({ sortQuery }: { sortQuery?: SortNotionType }): Promise<Response<Sales[]>> => {
+const getSalesData = async ({ query }: { query?: NotionPayload }): Promise<Response<Sales[]>> => {
     let response: AxiosResponse<Sales[], any>
     try {
         //response = await get<Sales[]>(SALES);
         let payload = {};
-        console.log("sortQuery received:", sortQuery)
-        if (sortQuery?.sorts) {
-            payload = { sortParams: sortQuery }
+        if (query) {
+            payload = query
         }
 
         response = await post<Sales[]>(SALES, payload);
@@ -25,7 +24,7 @@ const getSalesData = async ({ sortQuery }: { sortQuery?: SortNotionType }): Prom
 
 
 
-const getSortedData = async (sortBy: SortNotionType): Promise<Response<Sales[]>> => {
+const getSortedData = async (sortBy: NotionPayload): Promise<Response<Sales[]>> => {
     let response: AxiosResponse<Sales[], any>
     try {
         response = await post<Sales[]>(SALES, sortBy);

@@ -20,19 +20,6 @@ app.use(cors({ origin: 'http://localhost:3000' }));
 const port = 8000;
 const endpoint = `https://api.notion.com/v1/databases/${notionDatabaseId}/query`;
 
-type Sales = {
-  id: number;
-  name: string;
-  company: string;
-  status: 'low' | 'medium' | 'high';
-  estimated_value: number;
-  account_owner: string;
-};
-
-type SortNotionParams = {
-  sortProperty: string;
-  sortOrder: 'asc' | 'desc';
-}
 
 let config = {
   Authorization: `Bearer ${notionSecret}`,
@@ -52,15 +39,15 @@ let config = {
 // });
 
 app.post("/sales/", jsonParser, async (req: Request, res: Response) => {
-  const sortPayload: {
+  const payload: {
     sorts: {
       property: string,
       direction: 'ascending' | 'descending'
     } | {}
-  } = req.body.sortParams;
+  } = req.body;
 
   try {
-    const ress = await axios.post(endpoint, sortPayload, { headers: config });
+    const ress = await axios.post(endpoint, payload, { headers: config });
 
     const list = ress.data.results.map((record: any) => {
       return record.properties;
