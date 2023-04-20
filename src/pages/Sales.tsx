@@ -36,17 +36,21 @@ const SalesPage = () => {
   if (isError) {
     return <div>{sales.message}</div>;
   }
-  if (isPending) {
-    return <div>Loading...</div>;
-  }
+  // if (isPending) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <>
+      <Filter onApplyFilter={handleFilter} filterPayload={filterPayload} />
       {sales?.data && columns && (
-        <>
-          <Filter data={sales?.data} onApplyFilter={handleFilter} filterPayload={filterPayload}/>
-          <Table data={sales?.data} columns={columns} onSorting={handleSorting} sorting={sorting} />
-        </>
+        <Table
+          isDataLoading={isPending}
+          data={sales?.data}
+          columns={columns}
+          onSorting={handleSorting}
+          sorting={sorting}
+        />
       )}
     </>
   );

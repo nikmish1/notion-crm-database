@@ -89,17 +89,12 @@ export type SortPayload = {
     direction: 'ascending' | 'descending'
 }[]
 
-// export type FilterPayload = {
-//     [x: string]: keyof Sales | {
-//         equals: string | number;
-//     };
-//     property: keyof Sales;
-// };
-
 export type FilterPayload = {
-    property: string,
-    [x: string]: any
-}
+    [x: string]: any,
+    property?: keyof Sales;
+    and?: any[]
+};
+
 
 // export type Filter = {
 //     property: string,

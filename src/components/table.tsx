@@ -13,6 +13,7 @@ import { useState } from 'react';
 
 type TableProps<T> = {
   data: T[];
+  isDataLoading: boolean;
   columns: ColumnDef<T, any>[];
   sorting: SortingState;
   onSorting: OnChangeFn<SortingState>;
@@ -24,11 +25,16 @@ export const getHeaderDraggedIdx = (list: any[], key: string, id: string): numbe
     return col[key] === id;
   });
 
-  console.log({ idx });
   return idx;
 };
 
-export const Table = <T extends object>({ data, columns, onSorting, sorting }: TableProps<T>) => {
+export const Table = <T extends object>({
+  data,
+  isDataLoading,
+  columns,
+  onSorting,
+  sorting,
+}: TableProps<T>) => {
   const [colHeaders, setColHeaders] = useState<any>(columns);
   const [dragOver, setDragOver] = useState('');
 
@@ -156,13 +162,19 @@ export const Table = <T extends object>({ data, columns, onSorting, sorting }: T
         </thead>
 
         <tbody>
-          {table.getRowModel().rows.length > 0 ? table.getRowModel().rows.map( (row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-              ))}
-            </tr>
-          )) : <tr>No data found</tr> }
+          {isDataLoading ? (
+            <tr>Loading...</tr>
+          ) : table.getRowModel().rows.length > 0 ? (
+            table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                ))}
+              </tr>
+            ))
+          ) : (
+            <tr>No data found</tr>
+          )}
         </tbody>
       </table>
     </div>
