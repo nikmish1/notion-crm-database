@@ -18,10 +18,16 @@ export const FilterOptionsBasedOnType = ({
 }: RenderFilterProps) => {
   const filters: JSX.Element[] = [];
 
-  if (selectedOption?.type === 'rich_text' || selectedOption?.type === 'title') {
+  if (
+    selectedOption?.type === 'rich_text' ||
+    selectedOption?.type === 'title' ||
+    selectedOption?.type === 'number'
+  ) {
+    const type = selectedOption?.type === 'number' ? 'number' : 'text';
     filters.push(
       <RichTextFilter
         key={selectedOption?.id}
+        type={type}
         id={selectedOption?.id}
         name={selectedOption?.name || ''}
         filterValue={filterValue}
