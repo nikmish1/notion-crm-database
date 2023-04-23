@@ -6,7 +6,11 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
-### `npm start`
+- run `npm install` from root of sales-crm application.
+- cd in to `server` directory run `npm install`.
+- now move back to root directory and `npm run dev`
+- applications should start on ` http://localhost:3000`
+
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
