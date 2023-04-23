@@ -61,7 +61,6 @@ export const FilterContainer = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       <div>Filter by:</div>
-      {console.log({ selectedOption })}
       <FilterTypeDropDown
         selectedOption={selectedOption}
         onFilterTypeSelect={handleFilterTypeSelect}

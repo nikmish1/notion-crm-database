@@ -1,5 +1,5 @@
-import { Client } from '@notionhq/client';
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+
+import axios from 'axios';
 import express, { Express, Request, Response } from 'express';
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -56,7 +56,7 @@ app.post("/sales/", jsonParser, async (req: Request, res: Response) => {
     //res.writeHead(200);
     res.send(list);
   }
-  catch (err: any | AxiosError) {
+  catch (err: any) {
     console.log(err)
     res.send(err);
   }

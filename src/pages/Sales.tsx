@@ -1,7 +1,7 @@
 import { OnChangeFn, SortingState, functionalUpdate } from '@tanstack/react-table';
 
 import columns from './columns';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useSales } from '../hooks/useSales';
 import { getSortingParams } from '../utils/object-util';
 import { Table, Filter } from '../components';
